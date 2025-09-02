@@ -44,16 +44,18 @@ export class ZentikNotifier extends ScryptedDeviceBase implements Notifier, Sett
         if (typeof media === 'string') {
             media = await mediaManager.createMediaObjectFromUrl(media as string);
         }
-        const imageUrl = await mediaManager.convertMediaObjectToUrl(media, 'image/jpeg');
-
         const { videoUrl, gifUrl, ...restProperties } = options?.data?.zentik ?? {};
 
-        const attachments: MessageAttachment[] = [
-            {
-                mediaType: MediaType.Image,
-                url: imageUrl
-            }
-        ];
+        const attachments: MessageAttachment[] = [];
+        if (media) {
+            const imageUrl = await mediaManager.convertMediaObjectToUrl(media, 'image/jpeg');
+            attachments.push(
+                {
+                    mediaType: MediaType.Image,
+                    url: imageUrl
+                }
+            )
+        }
 
         if (videoUrl) {
             attachments.push({
