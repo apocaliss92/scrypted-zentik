@@ -47,33 +47,18 @@ export class ZentikNotifier extends ScryptedDeviceBase implements Notifier, Sett
             return;
         }
 
-        if (typeof media === 'string') {
-            media = await mediaManager.createMediaObjectFromUrl(media as string);
-        }
-        const { videoUrl, gifUrl, ...restProperties } = options?.data?.zentik ?? {};
+        const props = options?.data?.zentik ?? {};
 
-        const attachments: MessageAttachment[] = [];
-        if (media) {
-            const imageUrl = await mediaManager.convertMediaObjectToUrl(media, 'image/jpeg');
-            attachments.push(
-                {
-                    mediaType: MediaType.Image,
-                    url: imageUrl
+        let imageUrl: string | undefined;
+        try {
+            if (media) {
+                if (typeof media !== 'string') {
+                    media = await mediaManager.convertMediaObjectToUrl(media, 'image/jpeg');
                 }
-            )
-        }
-
-        if (videoUrl) {
-            attachments.push({
-                mediaType: MediaType.Video,
-                url: videoUrl
-            });
-        }
-        if (gifUrl) {
-            attachments.push({
-                mediaType: MediaType.Gif,
-                url: gifUrl
-            });
+                imageUrl = media;
+            }
+        } catch (e) {
+            this.console.log('Error trying to parse media image', e);
         }
 
         const userIdsToUse = userIds && userIds.length ? userIds : undefined;
@@ -84,10 +69,10 @@ export class ZentikNotifier extends ScryptedDeviceBase implements Notifier, Sett
                 title,
                 bucketId,
                 body: options.body ?? options.bodyWithSubtitle,
-                attachments,
+                imageUrl,
                 locale,
                 userIds: userIdsToUse,
-                ...restProperties,
+                ...props,
             };
             this.console.log(`Sending notification to ${bucketId} with payload ${JSON.stringify(payload)}`);
 

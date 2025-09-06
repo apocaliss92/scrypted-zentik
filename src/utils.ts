@@ -54,4 +54,8 @@ export type Message = {
   tapAction?: NotificationAction;
   title: string;
   userIds?: string;
+  imageUrl?: string;
+  gifUrl?: string;
+  videoUrl?: string;
+  tapUrl?: string;
 };
