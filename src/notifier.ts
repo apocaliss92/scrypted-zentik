@@ -25,7 +25,13 @@ export class ZentikNotifier extends ScryptedDeviceBase implements Notifier, Sett
         },
         bucketId: {
             type: 'string',
-            title: 'Bucket ID',
+            title: 'Bucket ID (or name)',
+        },
+        userIds: {
+            type: 'string',
+            multiple: true,
+            title: 'User IDs (or usernames)',
+            description: 'If the bucket is shared, specify which users to target. Leave blank for all the users'
         },
     });
 
@@ -34,7 +40,7 @@ export class ZentikNotifier extends ScryptedDeviceBase implements Notifier, Sett
     }
 
     async sendNotification(title: string, options?: NotifierOptions, media?: MediaObject | string, icon?: MediaObject | string): Promise<void> {
-        const { accessToken, bucketId, serverUrl } = this.storageSettings.values;
+        const { accessToken, bucketId, serverUrl, userIds } = this.storageSettings.values;
 
         if (!accessToken || !bucketId || !serverUrl) {
             this.console.log('Some of the parameters are not set');
@@ -70,6 +76,8 @@ export class ZentikNotifier extends ScryptedDeviceBase implements Notifier, Sett
             });
         }
 
+        const userIdsToUse = userIds && userIds.length ? userIds : undefined;
+
         try {
             const { locale } = this.plugin.storageSettings.values;
             const payload: Message = {
@@ -78,6 +86,7 @@ export class ZentikNotifier extends ScryptedDeviceBase implements Notifier, Sett
                 body: options.body ?? options.bodyWithSubtitle,
                 attachments,
                 locale,
+                userIds: userIdsToUse,
                 ...restProperties,
             };
             this.console.log(`Sending notification to ${bucketId} with payload ${JSON.stringify(payload)}`);

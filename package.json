@@ -1,7 +1,7 @@
 {
   "name": "@apocaliss92/scrypted-zentik",
   "description": "zentik integration for scrypted",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/apocaliss92/scrypted-zentik"

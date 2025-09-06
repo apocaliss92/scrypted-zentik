@@ -53,4 +53,5 @@ export type Message = {
   subtitle?: string
   tapAction?: NotificationAction;
   title: string;
+  userIds?: string;
 };
